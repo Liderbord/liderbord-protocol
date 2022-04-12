@@ -1,2 +1,3 @@
-# liderbord-protocol
+# Liderbord Protocol
+
 The core protocol under Liderbord running on Solana
