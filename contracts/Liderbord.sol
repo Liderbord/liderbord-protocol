@@ -82,12 +82,13 @@ contract Liderbords {
         Resource storage resource = resources[_link];
         Liderbord storage liderbord = liderbords[_liderbordName];
         require(resource.owner != msg.sender, "Can't vote on your own resource");
-        require(liderbord.voters[msg.sender] == 0, "Can't voted in this resource");
-        require(_side != 0, "Need to vote on a side");
+        require(liderbord.voters[msg.sender] == 0, "Can't vote in this resource");
+        require(_side == 1 || _side == -1, "Vote has to be either 1 or -1");
         console.log("Voting for '%s' in '%s'", _link, _liderbordName);
         liderbord.voters[msg.sender] = _side;
         resource.scores[_liderbordName].value += _side;
     }
+
 
 
 
