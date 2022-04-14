@@ -5,10 +5,11 @@ import "hardhat/console.sol";
 
 contract Liderbords {
     struct Score {
-        uint value;
+        int value;
         uint index;
     }
     struct Resource {
+        // scores : mapping (liderbordName => score)
         mapping(string => Score) scores;
         string[] liderbords;
         address owner;
@@ -16,16 +17,18 @@ contract Liderbords {
     struct Liderbord {
         uint length;
         mapping(uint => string) resources;
-        mapping(address => uint) voters;
+        mapping(address => int) voters;
     }
+    // resources : mapping(resourceLink => resource)
     mapping(string => Resource) private resources;
+    // liderbords : mapping(liderbordName => Liderbord)
     mapping(string => Liderbord) private liderbords;
 
-    function getLiderbord(string memory _liderbordName) public view returns (string[] memory, uint[] memory) {
+    function getLiderbord(string memory _liderbordName) public view returns (string[] memory, int[] memory) {
         console.log("Getting liderbord '%s'", _liderbordName);
         uint n = liderbords[_liderbordName].length;
         string[] memory links = new string[](n);
-        uint[] memory scores = new uint[](n);
+        int[] memory scores = new int[](n);
         for (uint i = 0; i < n; i++) {
             Resource storage resource = resources[liderbords[_liderbordName].resources[i]];
             links[i] = liderbords[_liderbordName].resources[i];
@@ -48,6 +51,22 @@ contract Liderbords {
         }
     }
 
+
+    function getResource(string memory _link) public view returns (string[] memory, Score[] memory){
+        console.log("Getting ressource '%s'", _link);
+        Resource storage resource = resources[_link];
+        uint length = resource.liderbords.length;
+        string[] memory liderbordNames = new string[](length);
+        Score[] memory scores = new Score[](length);
+        for (uint i = 0; i<length; i++){
+            liderbordNames[i] = resource.liderbords[i];
+            scores[i] = resource.scores[liderbordNames[i]];
+        }
+        return(liderbordNames, scores);
+    }
+
+
+
     function deleteResource(string memory _link) public {
         console.log("Deleting resource '%s'", _link);
         Resource storage resource = resources[_link];
@@ -59,7 +78,7 @@ contract Liderbords {
         delete resources[_link];
     }
 
-    function vote(string memory _link, string memory _liderbordName, uint _side) public {
+    function vote(string memory _link, string memory _liderbordName, int _side) public {
         Resource storage resource = resources[_link];
         Liderbord storage liderbord = liderbords[_liderbordName];
         require(resource.owner != msg.sender, "Can't vote on your own resource");
@@ -69,4 +88,11 @@ contract Liderbords {
         liderbord.voters[msg.sender] = _side;
         resource.scores[_liderbordName].value += _side;
     }
+
+
+
+
+
+
+
 }
