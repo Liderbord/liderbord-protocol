@@ -69,7 +69,7 @@ contract Liderbords {
     function claimHappycoins() public {
         console.log("Claiming happycoins'");
         require(users[msg.sender].happycoins < 30, "Maximun of 30 happycoins");
-        if (users[msg.sender].lastDateClaimed + 86400 < block.timestamp || users[msg.sender].lastDateClaimed == 0) {
+        if (users[msg.sender].lastDateClaimed + 86400 > block.timestamp || users[msg.sender].lastDateClaimed == 0) {
             users[msg.sender].lastDateClaimed = block.timestamp;
             if (users[msg.sender].happycoins >= 20) {
                 users[msg.sender].happycoins == 30;
