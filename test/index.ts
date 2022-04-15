@@ -1,22 +1,25 @@
 import { expect } from "chai";
 import { ethers } from "hardhat";
+import { Liderbords__factory  } from "../typechain";
+import { Liderbords } from "../typechain/Liderbords";
 
 describe("Liderbord", function () {
-  it("Should add a resource", async function () {
-    const Liderbords = await ethers.getContractFactory("Liderbords");
-    const liderbords = await Liderbords.deploy();
+  let Liderbords: Liderbords__factory, liderbords: Liderbords;
+  this.beforeEach(async () => {
+    Liderbords = await ethers.getContractFactory("Liderbords");
+    liderbords = await Liderbords.deploy();
     await liderbords.deployed();
 
+    const claimHappycoinsTX = await liderbords.claimHappycoins();
+    await claimHappycoinsTX.wait();
+  });
+  
+  it("Should add a resource", async function () {
     const setResourceTx = await liderbords.addResource("https://www.youtube.com/watch?v=dQw4w9WgXcQ", ["Machine Learning", "AI"]);
-
     await setResourceTx.wait();
   });
 
   it("Should get the resources from a liderbord", async function () {
-    const Liderbords = await ethers.getContractFactory("Liderbords");
-    const liderbords = await Liderbords.deploy();
-    await liderbords.deployed();
-
     const setResourceTx = await liderbords.addResource("https://www.youtube.com/watch?v=dQw4w9WgXcQ", ["Machine Learning", "AI"]);
     await setResourceTx.wait();
 
@@ -28,10 +31,6 @@ describe("Liderbord", function () {
   });
 
   it("Should delete a resource", async function () {
-    const Liderbords = await ethers.getContractFactory("Liderbords");
-    const liderbords = await Liderbords.deploy();
-    await liderbords.deployed();
-
     const setResourceTx = await liderbords.addResource("https://www.youtube.com/watch?v=dQw4w9WgXcQ", ["Machine Learning", "AI"]);
     await setResourceTx.wait();
 
@@ -51,17 +50,13 @@ describe("Liderbord", function () {
     expect(scoresWithZeroValues).to.have.lengthOf(0);
   });
 
-  it("Vote for a resource", async function () {
-    const Liderbords = await ethers.getContractFactory("Liderbords");
-    const liderbords = await Liderbords.deploy();
-    await liderbords.deployed();
-
+  it("Vote for a resources", async function () {
     const setResourceTx = await liderbords.addResource("https://www.youtube.com/watch?v=dQw4w9WgXcQ", ["Machine Learning", "AI"]);
     await setResourceTx.wait();
 
 
     const voteTx = await liderbords.vote("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "AI", 1);
-    await setResourceTx.wait();
+    await voteTx.wait();
 
     const [links, scores] = await liderbords.getLiderbord("AI");
     

@@ -19,10 +19,14 @@ contract Liderbords {
         mapping(uint => string) resources;
         mapping(address => int) voters;
     }
-    // resources : mapping(resourceLink => resource)
+    struct User {
+        uint happycoins;
+        uint lastDateClaimed;
+    }
     mapping(string => Resource) private resources;
     // liderbords : mapping(liderbordName => Liderbord)
     mapping(string => Liderbord) private liderbords;
+    mapping(address => User) private users;
 
     function getLiderbord(string memory _liderbordName) public view returns (string[] memory, int[] memory) {
         console.log("Getting liderbord '%s'", _liderbordName);
@@ -38,6 +42,8 @@ contract Liderbords {
     }
 
     function addResource(string memory _link, string[] memory _liderbordNames) public {
+        require(users[msg.sender].happycoins > 1, "Need 2 HC to add a resource");
+        users[msg.sender].happycoins -= 2;
         console.log("Adding resource '%s'", _link);
         // require that the resource does not exist
         Resource storage resource = resources[_link];
@@ -78,12 +84,29 @@ contract Liderbords {
         delete resources[_link];
     }
 
+    function claimHappycoins() public {
+        console.log("Claiming happycoins'");
+        require(users[msg.sender].happycoins < 30, "Maximun of 30 happycoins");
+        if (users[msg.sender].lastDateClaimed + 86400 > block.timestamp || users[msg.sender].lastDateClaimed == 0) {
+            users[msg.sender].lastDateClaimed = block.timestamp;
+            if (users[msg.sender].happycoins >= 20) {
+                users[msg.sender].happycoins == 30;
+            } else {
+                users[msg.sender].happycoins += 10;
+            }
+        } else {
+            revert("Can't claim happycoins before 24h");
+        }
+    }
+
     function vote(string memory _link, string memory _liderbordName, int _side) public {
         Resource storage resource = resources[_link];
         Liderbord storage liderbord = liderbords[_liderbordName];
         require(resource.owner != msg.sender, "Can't vote on your own resource");
-        require(liderbord.voters[msg.sender] == 0, "Can't vote in this resource");
+        require(liderbord.voters[msg.sender] == 0, "Can't voted in this resource");
         require(_side == 1 || _side == -1, "Vote has to be either 1 or -1");
+        require(users[msg.sender].happycoins > 0, "Need to have happycoins to vote");
+        users[msg.sender].happycoins--;
         console.log("Voting for '%s' in '%s'", _link, _liderbordName);
         liderbord.voters[msg.sender] = _side;
         resource.scores[_liderbordName].value += _side;
