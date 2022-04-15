@@ -67,12 +67,6 @@ describe("Liderbord", function () {
 
 
   it("Vote for a resource with a prohibited vote", async function () {
-    const Liderbords = await ethers.getContractFactory("Liderbords");
-    const liderbords = await Liderbords.deploy();
-    await liderbords.deployed();
-
-   
-
     const setResourceTx = await liderbords.addResource("https://www.youtube.com/watch?v=dQw4w9WgXcQ", ["Machine Learning", "AI"]);
     await setResourceTx.wait();
 
@@ -89,10 +83,6 @@ describe("Liderbord", function () {
 
 
   it("Get the resource from a link", async function () {
-    const Liderbords = await ethers.getContractFactory("Liderbords");
-    const liderbords = await Liderbords.deploy();
-    await liderbords.deployed();
-
     const setResourceTx = await liderbords.addResource("https://www.youtube.com/watch?v=dQw4w9WgXcQ", ["Machine Learning", "AI"]);
     await setResourceTx.wait();
 
