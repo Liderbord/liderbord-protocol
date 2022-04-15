@@ -108,7 +108,6 @@ describe("Liderbord", function () {
     const vote1Tx = await liderbords.vote("https://www.youtube.com/watch?v=dQw4w9WgXcQ", "Machine Learning", -1);
     await setResourceTx.wait();
 
-    //const [links, scores] = await liderbords.getLiderbord("AI");
 
     const [liderbordNames, scores] = await liderbords.getResource("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 
@@ -121,6 +120,5 @@ describe("Liderbord", function () {
     expect(scores[1].value).to.be.equal(1);
 
   });
-
 
 });
