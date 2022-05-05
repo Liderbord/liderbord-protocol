@@ -139,7 +139,7 @@ contract Liderbords is BaseRelayRecipient {
         }
     }
 
-    function getHappycoins(address _user) public view returns (User memory) {
+    function getUser(address _user) public view returns (User memory) {
         return users[_user];
     }
 

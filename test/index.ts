@@ -14,7 +14,7 @@ describe("Liderbord", function () {
     const claimHappycoinsTX = await liderbords.claimHappycoins();
     await claimHappycoinsTX.wait();
     console.log(
-      await (await liderbords.getHappycoins(address)).happycoins.toNumber()
+      await (await liderbords.getUser(address)).happycoins.toNumber()
     );
   });
 
